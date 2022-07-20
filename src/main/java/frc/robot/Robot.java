@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -34,6 +35,7 @@ public class Robot extends TimedRobot {
    MotorControllerGroup m_right = new MotorControllerGroup(victor2, talon2);
 
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
+   double speed = 1.0;
 
 /*
  * ana é muito gostosa e eu gosto de abacaxi
@@ -88,10 +90,22 @@ public static float clamp(float val, float min, float max) {
 
   @Override
   public void teleopPeriodic() {
-
-    double speed = joy1.getRawAxis(1)*clamp((float)joy1.getRawAxis(3), 0.1f, 1.0f);
-    //m_left.set(speed);
-    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getX());
+    SmartDashboard.putNumber("Velocidade", -joy1.getY());
+    SmartDashboard.putNumber("Modificador", speed);
+    
+    if(joy1.getRawButton(1)){
+      speed = .6;
+      SmartDashboard.putNumber("Modificador", speed);
+    }else if(joy1.getRawButton(2)){
+      speed = .8;
+      SmartDashboard.putNumber("Modificador", speed);
+    }else if(joy1.getRawButton(3)){
+      speed = 1.0;
+      SmartDashboard.putNumber("Modificador", speed);
+    }
+    //double speed = joy1.getRawAxis(1)*clamp((float)joy1.getRawAxis(3), 0.1f, 1.0f);
+    
+    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getZ()*0.60);
     
     
 
