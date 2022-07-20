@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
 
 /*
- * joao é muito gostoso e eu gosto de manga
+ * ana é muito gostosa e eu gosto de abacaxi
  */
    
 
