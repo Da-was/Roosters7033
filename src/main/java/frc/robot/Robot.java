@@ -115,7 +115,9 @@ public class Robot extends TimedRobot {
       System.out.println("NAO");
       
     }
-    System.out.println(encoder.get());
+    SmartDashboard.putNumber("Encoder", encoder.get());
+    SmartDashboard.putBoolean("Fim de curso", input.get());
+  
   }
 
   @Override
