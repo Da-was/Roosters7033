@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -24,6 +27,8 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+  private double startTime;
+
 
    Victor victor1 = new Victor(1);
    Talon talon1 = new Talon(0);
@@ -38,15 +43,13 @@ public class Robot extends TimedRobot {
    double speed = 1.0;
 
 
-   
-
+   Encoder encoder = new Encoder(2, 1,false, EncodingType.k1X);
+   DigitalInput input = new DigitalInput(0);
    Joystick joy1 = new Joystick(0);
 
-public static float clamp(float val, float min, float max) {
-  return Math.max(min, Math.min(max, val));
-}
 
-   private double startTime;
+
+   
 
   @Override
   public void robotInit(){
@@ -103,10 +106,18 @@ public static float clamp(float val, float min, float max) {
     }
     //double speed = joy1.getRawAxis(1)*clamp((float)joy1.getRawAxis(3), 0.1f, 1.0f);
     
-    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getZ()*0.60);
-    
+    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getZ()*0.80);// TODO: arrumar o problema com o eixo Z;
     
 
+    if(input.get()){
+      System.out.println("FOI");
+    }else{
+      System.out.println("NAO");
+      
+    }
+    SmartDashboard.putNumber("Encoder", encoder.get());
+    SmartDashboard.putBoolean("Fim de curso", input.get());
+  
   }
 
   @Override
