@@ -42,6 +42,11 @@ public class Robot extends TimedRobot {
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
    double speed = 1.0;
 
+   Victor m_arm = new Victor(4);
+   Victor m_arm1 = new Victor(5);
+
+   MotorControllerGroup arm_group = new MotorControllerGroup(m_arm, m_arm1);
+
 
    Encoder encoder = new Encoder(2, 1,false, EncodingType.k1X);
    DigitalInput input = new DigitalInput(0);
@@ -106,15 +111,15 @@ public class Robot extends TimedRobot {
     }
     //double speed = joy1.getRawAxis(1)*clamp((float)joy1.getRawAxis(3), 0.1f, 1.0f);
     
-    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getZ()*0.80);// TODO: arrumar o problema com o eixo Z;
+    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getRawAxis(4)*0.75);// TODO: arrumar o problema com o eixo Z;
     
 
-    if(input.get()){
+    /* if(input.get()){
       System.out.println("FOI");
     }else{
       System.out.println("NAO");
       
-    }
+    } */
     SmartDashboard.putNumber("Encoder", encoder.get());
     SmartDashboard.putBoolean("Fim de curso", input.get());
   
