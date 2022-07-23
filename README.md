@@ -1,5 +1,4 @@
 # CONSIDERAÇÕES
-Acredito que apenas as pessoas da programação vão chegar a ler esse documento, então irei descrever algumas coisas importantes para serem lembradas.
 #### ->Considerações para serem tomadas enquanto desenvolverem os códigos:
 
 - Utilizaremos o padrão camel case para os commits e nomes de branch.
