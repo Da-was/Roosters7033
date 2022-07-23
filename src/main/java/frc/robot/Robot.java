@@ -37,9 +37,7 @@ public class Robot extends TimedRobot {
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
    double speed = 1.0;
 
-/*
- * ana é muito gostosa e eu gosto de abacaxi
- */
+
    
 
    Joystick joy1 = new Joystick(0);
