@@ -8,4 +8,4 @@
 
 
 # PREVISÕES
-- O robo deve ficar pronto para a OffSeason até sexta feira, dia 29/07/2022
+- O robo deve ficar pronto para a OffSeason até sexta feira, dia 29/07/2022.
