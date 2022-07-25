@@ -24,24 +24,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
   /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
+   * 
+   * Mapa de portas:
+   * 
+   * motores [0,1,2,3,4,5] pwm
+   * encoder [1,2] Digital
+   * fim de curso [0] Digital
    */
   private double startTime;
 
-
+//chassi
    Victor victor1 = new Victor(1);
    Talon talon1 = new Talon(0);
    Victor victor2 = new Victor(2);
    Talon talon2 = new Talon(3);
   
-  
+
    MotorControllerGroup m_left = new MotorControllerGroup(victor1, talon1);
    MotorControllerGroup m_right = new MotorControllerGroup(victor2, talon2);
 
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
    double speed = 1.0;
 
+
+//garraMovel
    Victor m_arm = new Victor(4);
    Victor m_arm1 = new Victor(5);
 
@@ -52,7 +58,9 @@ public class Robot extends TimedRobot {
    DigitalInput input = new DigitalInput(0);
    Joystick joy1 = new Joystick(0);
 
-
+   public static String formatForDashboard(double speed1) {
+    return String.format("%.2f", speed1);
+}
 
    
 
@@ -96,7 +104,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Velocidade", -joy1.getY());
+    SmartDashboard.putString("Velocidade", formatForDashboard(-joy1.getY()));
     SmartDashboard.putNumber("Modificador", speed);
     
     if(joy1.getRawButton(1)){
@@ -109,11 +117,19 @@ public class Robot extends TimedRobot {
       speed = 1.0;
       SmartDashboard.putNumber("Modificador", speed);
     }
-    //double speed = joy1.getRawAxis(1)*clamp((float)joy1.getRawAxis(3), 0.1f, 1.0f);
     
     m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getRawAxis(4)*0.75);// TODO: arrumar o problema com o eixo Z;
-    
 
+
+    if(joy1.getRawButton(5)){
+      //arm_group.set(0.7);
+      SmartDashboard.putString("garra estado", "subindo");
+    }else if(joy1.getRawButton(6)){//rb
+      SmartDashboard.putString("garra estado", "descendo");
+      //arm_group.set(-0.7);
+    }
+    
+    //arm_group.set(-0.0);
     /* if(input.get()){
       System.out.println("FOI");
     }else{
