@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
     return String.format("%.2f", speed1);
 }
 
-private final Relay m_relay = new Relay(0);
+//private final Relay m_relay = new Relay(0);
    
 
   @Override
@@ -111,12 +111,12 @@ private final Relay m_relay = new Relay(0);
     
     if(joy1.getRawButton(1)){
       speed = .6;
-      m_relay.set(Relay.Value.kOn);
-      m_relay.set(Relay.Value.kForward);
+      //m_relay.set(Relay.Value.kOn);
+      //m_relay.set(Relay.Value.kForward);
       SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(2)){
       speed = .8;
-      m_relay.set(Relay.Value.kOff);
+      //m_relay.set(Relay.Value.kOff);
       SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(3)){
       speed = 1.0;
