@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
@@ -62,6 +63,7 @@ public class Robot extends TimedRobot {
     return String.format("%.2f", speed1);
 }
 
+private final Relay m_relay = new Relay(0);
    
 
   @Override
@@ -109,9 +111,12 @@ public class Robot extends TimedRobot {
     
     if(joy1.getRawButton(1)){
       speed = .6;
+      m_relay.set(Relay.Value.kOn);
+      m_relay.set(Relay.Value.kForward);
       SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(2)){
       speed = .8;
+      m_relay.set(Relay.Value.kOff);
       SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(3)){
       speed = 1.0;
@@ -122,20 +127,23 @@ public class Robot extends TimedRobot {
 
 
     if(joy1.getRawButton(5)){
-      //arm_group.set(0.7);
+      arm_group.set(0.7);
       SmartDashboard.putString("garra estado", "subindo");
     }else if(joy1.getRawButton(6)){//rb
       SmartDashboard.putString("garra estado", "descendo");
-      //arm_group.set(-0.7);
+      arm_group.set(-0.7);
     }
     
     //arm_group.set(-0.0);
     /* if(input.get()){
       System.out.println("FOI");
     }else{
-      System.out.println("NAO");
+      System.out.println("NAO");   
       
     } */
+
+
+    
     SmartDashboard.putNumber("Encoder", encoder.get());
     SmartDashboard.putBoolean("Fim de curso", input.get());
   
