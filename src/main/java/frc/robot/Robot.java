@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
    * 
    * motores [0,1,2,3,4,5] pwm
    * encoder [1,2] Digital
-   * fim de curso [0] Digital
+   * fim de curso [3,4] Digital
    */
   private double startTime;
 
@@ -52,19 +52,21 @@ public class Robot extends TimedRobot {
    Victor m_arm = new Victor(4);
    Victor m_arm1 = new Victor(5);
 
-   MotorControllerGroup arm_group = new MotorControllerGroup(m_arm, m_arm1);
+
 
 
    Encoder encoder = new Encoder(2, 1,false, EncodingType.k1X);
-   DigitalInput input = new DigitalInput(0);
+   DigitalInput input = new DigitalInput(3);
+   DigitalInput input1 = new DigitalInput(4);
    Joystick joy1 = new Joystick(0);
 
    public static String formatForDashboard(double speed1) {
     return String.format("%.2f", speed1);
 }
 
-private final Relay m_relay = new Relay(0);
    
+
+
 
   @Override
   public void robotInit(){
@@ -111,12 +113,12 @@ private final Relay m_relay = new Relay(0);
     
     if(joy1.getRawButton(1)){
       speed = .6;
-      m_relay.set(Relay.Value.kOn);
-      m_relay.set(Relay.Value.kForward);
+
       SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(2)){
       speed = .8;
-      m_relay.set(Relay.Value.kOff);
+
+
       SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(3)){
       speed = 1.0;
@@ -125,27 +127,49 @@ private final Relay m_relay = new Relay(0);
     
     m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getRawAxis(4)*0.75);// TODO: arrumar o problema com o eixo Z;
 
-
+//esteira
     if(joy1.getRawButton(5)){
-      arm_group.set(0.7);
-      SmartDashboard.putString("garra estado", "subindo");
+      m_arm.set(0.7);
+      SmartDashboard.putString("esteira", "pra fora ");
     }else if(joy1.getRawButton(6)){//rb
-      SmartDashboard.putString("garra estado", "descendo");
-      arm_group.set(-0.7);
+      SmartDashboard.putString("esteira", "pra dentro");
+      m_arm.set(-0.7);
     }
+     else if(!joy1.getRawButton(5) || !joy1.getRawButton(6))
+     {
+         m_arm.set(0.0);
+     }
     
-    //arm_group.set(-0.0);
-    /* if(input.get()){
+//subir/descer
+    if(joy1.getRawButton(7)){
+      m_arm1.set(0.7);
+      SmartDashboard.putString("garra estado", "subindo");
+    }else if(joy1.getRawButton(8)){//rb
+      SmartDashboard.putString("garra estado", "descendo");
+      m_arm1.set(-0.7);
+    }
+
+    else if(!joy1.getRawButton(7) || !joy1.getRawButton(8));
+    {
+      m_arm1.set(0.0);
+    }
+
+    
+    
+    m_arm.set(-0.0);
+     if(input.get()){
       System.out.println("FOI");
     }else{
       System.out.println("NAO");   
       
-    } */
+    } 
 
 
     
     SmartDashboard.putNumber("Encoder", encoder.get());
-    SmartDashboard.putBoolean("Fim de curso", input.get());
+    SmartDashboard.putBoolean("Fim de curso em cima ", input.get());
+    SmartDashboard.putBoolean("Fim de curso em baixo", input1.get());
+  
   
   }
 
