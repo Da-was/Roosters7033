@@ -46,7 +46,9 @@ public class Robot extends TimedRobot {
 
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
    double speed = 1.0;
+   Timer timer = new Timer();
 
+   ledControl lc = new ledControl(8);
 
 //garraMovel
    Victor m_arm = new Victor(4);
@@ -76,25 +78,30 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-   startTime = Timer.getFPGATimestamp();
+    timer.start();
+    startTime = timer.get();
+    System.out.println("start:" + startTime);
   }
 
   @Override
   public void autonomousPeriodic() {
-    double time = Timer.getFPGATimestamp();
+    double currentTime = timer.get();
 
-    if (time - startTime <3) {
-      victor1.set(0.6);
-      talon1.set(0.6);
-      victor2.set(-0.6);
-      talon2.set(-0.6);
+    if (currentTime <3) {
+      System.out.println(currentTime);
+      System.out.println("menos de 3s");
+      m_drive.arcadeDrive(0.7,0.0);
     }
-    
-    else{
-      victor1.set(0);
-      talon1.set(0);
-      victor2.set(0);
-      talon2.set(0);
+    else if(currentTime<7){
+      System.out.println(currentTime);
+      System.out.println("menos de 7s");
+      m_drive.arcadeDrive(0.0,0.6);
+    }else if(currentTime<9){
+      m_drive.arcadeDrive(0.0,0.0);
+    }else if(currentTime<13){
+      m_drive.arcadeDrive(0.0,-0.6);
+    }else{
+      m_drive.arcadeDrive(0.0,0.0);
     }
 
   }
@@ -134,7 +141,7 @@ public class Robot extends TimedRobot {
       arm_group.set(-0.7);
     }
     
-    //arm_group.set(-0.0);
+    arm_group.set(-0.0);
     /* if(input.get()){
       System.out.println("FOI");
     }else{
