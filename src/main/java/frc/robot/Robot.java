@@ -64,8 +64,6 @@ public class Robot extends TimedRobot {
    public static String formatForDashboard(double speed1) {
     return String.format("%.2f", speed1);
 }
-
-//private final Relay m_relay = new Relay(0);
    
 
   @Override
