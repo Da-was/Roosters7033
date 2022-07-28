@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
@@ -49,7 +48,7 @@ public class Robot extends TimedRobot {
 
 
 //garraMovel
-   Victor m_arm = new Victor(4);
+   Victor m_roller = new Victor(4);
    Victor m_arm1 = new Victor(5);
 
 
@@ -113,12 +112,12 @@ public class Robot extends TimedRobot {
     
     if(joy1.getRawButton(1)){
       speed = .6;
-
       SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(2)){
       speed = .8;
-
-
+      SmartDashboard.putNumber("Modificador", speed);
+    }else if(joy1.getRawButton(2)){
+      speed = .8;
       SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(3)){
       speed = 1.0;
@@ -129,34 +128,28 @@ public class Robot extends TimedRobot {
 
 //esteira
     if(joy1.getRawButton(5)){
-      m_arm.set(0.7);
+      m_roller.set(0.7);
       SmartDashboard.putString("esteira", "pra fora ");
     }else if(joy1.getRawButton(6)){//rb
       SmartDashboard.putString("esteira", "pra dentro");
-      m_arm.set(-0.7);
-    }
-     else if(!joy1.getRawButton(5) || !joy1.getRawButton(6))
-     {
-         m_arm.set(0.0);
+      m_roller.set(-0.7);
+    }else{
+         m_roller.set(0.0);
      }
     
 //subir/descer
     if(joy1.getRawButton(7)){
       m_arm1.set(0.7);
       SmartDashboard.putString("garra estado", "subindo");
-    }else if(joy1.getRawButton(8)){//rb
+    }else if(joy1.getRawButton(8)){//
       SmartDashboard.putString("garra estado", "descendo");
       m_arm1.set(-0.7);
     }
-
-    else if(!joy1.getRawButton(7) || !joy1.getRawButton(8));
-    {
+    else {
       m_arm1.set(0.0);
     }
+    m_roller.set(-0.0);
 
-    
-    
-    m_arm.set(-0.0);
      if(input.get()){
       System.out.println("FOI");
     }else{
