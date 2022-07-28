@@ -44,22 +44,35 @@ public class Robot extends TimedRobot {
    MotorControllerGroup m_right = new MotorControllerGroup(victor2, talon2);
 
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
+
+//variaveis
    double speed = 1.0;
    Timer timer = new Timer();
 
+//controle led
    ledControl lc = new ledControl(8);
 
 //garraMovel
-   Victor m_roller = new Victor(4);
-   Victor m_arm1 = new Victor(5);
+   Victor m_roller = new Victor(5);
+   Victor m_arm1 = new Victor(4);
 
 
 
-
+//sensores digitais
    Encoder encoder = new Encoder(2, 1,false, EncodingType.k1X);
    DigitalInput input = new DigitalInput(3);
    DigitalInput input1 = new DigitalInput(4);
+
+
+//joystick
    Joystick joy1 = new Joystick(0);
+
+
+/*
+ * classe para formatar uma double em duas casas decimais.
+ * (string)
+ * @return valor da double formatado em string
+ */
 
    public static String formatForDashboard(double speed1) {
     return String.format("%.2f", speed1);
@@ -112,6 +125,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+
+//modificador   
   public void teleopPeriodic() {
     SmartDashboard.putString("Velocidade", formatForDashboard(-joy1.getY()));
     SmartDashboard.putNumber("Modificador", speed);
@@ -130,44 +145,45 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Modificador", speed);
     }
     
-    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getRawAxis(4)*0.75);// TODO: arrumar o problema com o eixo Z;
+    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getRawAxis(4)*0.75);
 
 //esteira
     if(joy1.getRawButton(5)){
       m_roller.set(0.7);
       SmartDashboard.putString("esteira", "pra fora ");
     }else if(joy1.getRawButton(6)){//rb
-      SmartDashboard.putString("esteira", "pra dentro");
       m_roller.set(-0.7);
-    }else{
-         m_roller.set(0.0);
-     }
+
+      SmartDashboard.putString("esteira", "pra dentro");
+    }
+    else{
+      m_roller.set(0.0);
+    }
+
+
     
 //subir/descer
-    if(joy1.getRawButton(7)){
+    if(joy1.getRawButton(7) && input.get() && input1.get()){
       m_arm1.set(0.7);
       SmartDashboard.putString("garra estado", "subindo");
-    }else if(joy1.getRawButton(8)){//
+    }else if(joy1.getRawButton(8) && input.get() && input1.get()){//
       SmartDashboard.putString("garra estado", "descendo");
       m_arm1.set(-0.7);
     }
-    else {
+
+
+// sinal sensor fim de curso 
+    if(!input.get() || !input1.get()){
       m_arm1.set(0.0);
     }
-    m_roller.set(-0.0);
-
-     if(input.get()){
-      System.out.println("FOI");
-    }else{
-      System.out.println("NAO");   
-      
-    } 
 
 
-    
+
+
+
     SmartDashboard.putNumber("Encoder", encoder.get());
-    SmartDashboard.putBoolean("Fim de curso em cima ", input.get());
-    SmartDashboard.putBoolean("Fim de curso em baixo", input1.get());
+    SmartDashboard.putBoolean("top EOC ", input.get());
+    SmartDashboard.putBoolean("bottom EOC", input1.get());
   
   
   }
