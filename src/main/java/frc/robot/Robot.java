@@ -144,11 +144,9 @@ public class Robot extends TimedRobot {
     }else if(joy1.getRawButton(8)){//
       SmartDashboard.putString("garra estado", "descendo");
       m_arm1.set(-0.7);
-    }
-    else {
+    }else {
       m_arm1.set(0.0);
     }
-    m_roller.set(-0.0);
 
      if(input.get()){
       System.out.println("FOI");
