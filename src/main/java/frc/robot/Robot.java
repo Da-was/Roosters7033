@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
    * encoder [1,2] Digital
    * fim de curso [3,4] Digital
    */
-  private double startTime;
+  //private double startTime;
 
 //chassi
    Victor victor1 = new Victor(1);
@@ -46,11 +46,15 @@ public class Robot extends TimedRobot {
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
 
 //variaveis
-   double speed = 1.0;
+
+/**
+ * Variavel de controle da velocidade
+ */
+   double modificadorVelocidade = 1.0;
    Timer timer = new Timer();
 
 //controle led
-   ledControl lc = new ledControl(8);
+   ledControl lc = new ledControl(7,8,9);
 
 //garraMovel
    Victor m_roller = new Victor(5);
@@ -60,16 +64,25 @@ public class Robot extends TimedRobot {
 
 //sensores digitais
    Encoder encoder = new Encoder(2, 1,false, EncodingType.k1X);
-   DigitalInput input = new DigitalInput(3);
-   DigitalInput input1 = new DigitalInput(4);
+   DigitalInput fimDeCursoCima = new DigitalInput(3);
+   DigitalInput fimDeCursoBaixo = new DigitalInput(4);
 
 
-//joystick
+/**
+ * joystick map:
+ *  buttom 7- velocidade 0.6;
+ *  buttom 2- velocidade 0.8;
+ *  buttom 3- velocidade 1.0;
+ *  buttom 5- velocidade 0.7 (pra fora);
+ *  buttom 6- velocidade -0.7 (pra dentro);
+ *  buttom 4- velocidade 0.7 (subindo);
+ *  buttom 1- velocidade -0.7 (descendo);
+ */
    Joystick joy1 = new Joystick(0);
 
 
-/*
- * classe para formatar uma double em duas casas decimais.
+/**
+ * função para formatar uma double em duas casas decimais.
  * (string)
  * @return valor da double formatado em string
  */
@@ -78,9 +91,6 @@ public class Robot extends TimedRobot {
     return String.format("%.2f", speed1);
 }
    
-
-
-
   @Override
   public void robotInit(){
     
@@ -92,8 +102,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     timer.start();
-    startTime = timer.get();
-    System.out.println("start:" + startTime);
   }
 
   @Override
@@ -101,13 +109,9 @@ public class Robot extends TimedRobot {
     double currentTime = timer.get();
 
     if (currentTime <3) {
-      System.out.println(currentTime);
-      System.out.println("menos de 3s");
       m_drive.arcadeDrive(0.7,0.0);
     }
     else if(currentTime<7){
-      System.out.println(currentTime);
-      System.out.println("menos de 7s");
       m_drive.arcadeDrive(0.0,0.6);
     }else if(currentTime<9){
       m_drive.arcadeDrive(0.0,0.0);
@@ -117,35 +121,36 @@ public class Robot extends TimedRobot {
       m_drive.arcadeDrive(0.0,0.0);
     }
 
+    System.out.println(currentTime);
+
   }
 
   @Override
   public void teleopInit() {
-    
+    lc.run();
   }
 
-  @Override
 
-//modificador   
+/*
+ * modificador de velocidade em 60%, 80% e 100% do motor.
+ */
+  @Override
   public void teleopPeriodic() {
     SmartDashboard.putString("Velocidade", formatForDashboard(-joy1.getY()));
-    SmartDashboard.putNumber("Modificador", speed);
+    SmartDashboard.putNumber("Modificador", modificadorVelocidade);
     
-    if(joy1.getRawButton(1)){
-      speed = .6;
-      SmartDashboard.putNumber("Modificador", speed);
+    if(joy1.getRawButton(7)){
+      modificadorVelocidade = .6;
+      SmartDashboard.putNumber("Modificador", modificadorVelocidade);
     }else if(joy1.getRawButton(2)){
-      speed = .8;
-      SmartDashboard.putNumber("Modificador", speed);
-    }else if(joy1.getRawButton(2)){
-      speed = .8;
-      SmartDashboard.putNumber("Modificador", speed);
+      modificadorVelocidade = .8;
+      SmartDashboard.putNumber("Modificador", modificadorVelocidade);
     }else if(joy1.getRawButton(3)){
-      speed = 1.0;
-      SmartDashboard.putNumber("Modificador", speed);
+      modificadorVelocidade = 1.0;
+      SmartDashboard.putNumber("Modificador", modificadorVelocidade);
     }
     
-    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getRawAxis(4)*0.75);
+    m_drive.arcadeDrive(-joy1.getY()*modificadorVelocidade, joy1.getRawAxis(4)*0.75);
 
 //esteira
     if(joy1.getRawButton(5)){
@@ -153,40 +158,42 @@ public class Robot extends TimedRobot {
       SmartDashboard.putString("esteira", "pra fora ");
     }else if(joy1.getRawButton(6)){//rb
       m_roller.set(-0.7);
-
       SmartDashboard.putString("esteira", "pra dentro");
-    }
-    else{
+    }else{
       m_roller.set(0.0);
     }
 
-
+    int aux = 0;
     
 //subir/descer
-    if(joy1.getRawButton(7) && input.get() && input1.get()){
-      m_arm1.set(0.7);
+    if(joy1.getRawButton(4) && fimDeCursoBaixo.get()){
+      aux = 1;
+      m_arm1.set(0.3);
       SmartDashboard.putString("garra estado", "subindo");
-    }else if(joy1.getRawButton(8) && input.get() && input1.get()){//
+    }else if(joy1.getRawButton(1) && fimDeCursoCima.get()){//
+      aux=2;
+      m_arm1.set(-0.3);
       SmartDashboard.putString("garra estado", "descendo");
-      m_arm1.set(-0.7);
+
     }
 
 
 // sinal sensor fim de curso 
-    if(!input.get() || !input1.get()){
+    if(aux == 1 && !fimDeCursoBaixo.get()){
+      m_arm1.set(0.0);
+    }
+    else if( aux == 2 && !fimDeCursoCima.get()){
       m_arm1.set(0.0);
     }
 
 
 
-
-
     SmartDashboard.putNumber("Encoder", encoder.get());
-    SmartDashboard.putBoolean("top EOC ", input.get());
-    SmartDashboard.putBoolean("bottom EOC", input1.get());
-  
-  
+    SmartDashboard.putBoolean("top EOC ", fimDeCursoCima.get());
+    SmartDashboard.putBoolean("bottom EOC", fimDeCursoBaixo.get());
   }
+
+  
 
   @Override
   public void disabledInit() {}
