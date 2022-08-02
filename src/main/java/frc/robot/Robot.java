@@ -165,9 +165,7 @@ public class Robot extends TimedRobot {
     if(joy1.getRawButton(4) && fimDeCursoCima.get()){
       m_arm1.set(0.5);
       SmartDashboard.putString("Estado da garra", "Subindo");
-    }
-    else
-    {
+    }else{
       m_arm1.set(0.0);
       SmartDashboard.putString("Estado da garra", "Idle");
     }
