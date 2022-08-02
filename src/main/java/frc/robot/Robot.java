@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalInput;   
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
    * Mapa de portas:
    * 
    * motores [0,1,2,3,4,5] pwm
-   * encoder [1,2] Digital
+   * encoder [1,2, 5,6] Digital
    * fim de curso [3,4] Digital
    */
   //private double startTime;
@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
 
    MotorControllerGroup m_left = new MotorControllerGroup(victor1, talon1);
    MotorControllerGroup m_right = new MotorControllerGroup(victor2, talon2);
-
+ 
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
 
 //variaveis
@@ -64,8 +64,8 @@ public class Robot extends TimedRobot {
 
 //sensores digitais
    Encoder encoder = new Encoder(2, 1,false, EncodingType.k1X);
+   Encoder encoder2 = new Encoder(6, 5,false, EncodingType.k1X);
    DigitalInput fimDeCursoCima = new DigitalInput(3);
-   DigitalInput fimDeCursoBaixo = new DigitalInput(4);
 
 
 /**
@@ -86,7 +86,6 @@ public class Robot extends TimedRobot {
  * (string)
  * @return valor da double formatado em string
  */
-
    public static String formatForDashboard(double speed1) {
     return String.format("%.2f", speed1);
 }
@@ -130,7 +129,6 @@ public class Robot extends TimedRobot {
     lc.run();
   }
 
-
 /*
  * modificador de velocidade em 60%, 80% e 100% do motor.
  */
@@ -162,35 +160,23 @@ public class Robot extends TimedRobot {
     }else{
       m_roller.set(0.0);
     }
-
-    int aux = 0;
     
 //subir/descer
-    if(joy1.getRawButton(4) && fimDeCursoBaixo.get()){
-      aux = 1;
-      m_arm1.set(0.3);
-      SmartDashboard.putString("garra estado", "subindo");
-    }else if(joy1.getRawButton(1) && fimDeCursoCima.get()){//
-      aux=2;
-      m_arm1.set(-0.3);
-      SmartDashboard.putString("garra estado", "descendo");
-
+    if(joy1.getRawButton(4) && fimDeCursoCima.get()){
+      m_arm1.set(0.5);
+      SmartDashboard.putString("Estado da garra", "Subindo");
     }
-
-
-// sinal sensor fim de curso 
-    if(aux == 1 && !fimDeCursoBaixo.get()){
+    else
+    {
       m_arm1.set(0.0);
-    }
-    else if( aux == 2 && !fimDeCursoCima.get()){
-      m_arm1.set(0.0);
+      SmartDashboard.putString("Estado da garra", "Idle");
     }
 
 
 
     SmartDashboard.putNumber("Encoder", encoder.get());
-    SmartDashboard.putBoolean("top EOC ", fimDeCursoCima.get());
-    SmartDashboard.putBoolean("bottom EOC", fimDeCursoBaixo.get());
+    SmartDashboard.putBoolean("Fim de curso superior ", fimDeCursoCima.get());
+    
   }
 
   

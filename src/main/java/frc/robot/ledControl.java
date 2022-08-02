@@ -33,6 +33,7 @@ public class ledControl implements Runnable {
    }
 
    public void run(){
+       System.out.println("running");
     int pin =  this.settedPin;
     if(pin == 0 || pin == this.Blue){
         pin = this.Red;
@@ -42,16 +43,25 @@ public class ledControl implements Runnable {
 
          if(this.Red == pin){
             this.redDI.set(true);
+            System.out.println("vermelho on");
             this.greenDI.set(false);
+            System.out.println("verde off");
             this.BlueDI.set(false);
+            System.out.println("azul off");
          }else if(this.Green == pin){
             this.redDI.set(false);
+            System.out.println("vermelho off");
             this.greenDI.set(true);
+            System.out.println("verde on");
             this.BlueDI.set(false);
+            System.out.println("azul off");
          }else if(this.Blue == pin){
             this.redDI.set(false);
+            System.out.println("vermelho off");
             this.greenDI.set(false);
+            System.out.println("verde off");
             this.BlueDI.set(true);
+            System.out.println("azul on");
          }
         
     }
