@@ -88,6 +88,7 @@ public class Robot extends TimedRobot {
  */
    public static String formatForDashboard(double speed1) {
     return String.format("%.2f", speed1);
+
 }
    
   @Override
@@ -102,20 +103,21 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     timer.start();
   }
+  
 
   @Override
   public void autonomousPeriodic() {
     double currentTime = timer.get();
 
     if(currentTime < 3){
-      m_roller.set(0.7);
+      m_roller.set(0.9);
     }else if(currentTime <7 ){
       m_roller.stopMotor();
-      m_drive.arcadeDrive(-0.5,0.0);
+      m_drive.arcadeDrive(-0.6,0.0);
     } else if(currentTime<9){
-      m_drive.arcadeDrive(-0.5,0.0);
+      m_drive.arcadeDrive(-0.6,0.0);
     }else if(currentTime<13){
-      m_drive.arcadeDrive(0.0,-0.6);
+      m_drive.arcadeDrive(0.0,0.0);
     }else {
       m_drive.arcadeDrive(0.0, 0.0);
     }
