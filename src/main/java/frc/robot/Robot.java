@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DigitalInput;   
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.ledControl;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -28,10 +29,10 @@ public class Robot extends TimedRobot {
    * Mapa de portas:
    * 
    * motores [0,1,2,3,4,5] pwm
-   * encoder [1,2, 5,6] Digital
+   * encoder [1,2] Digital
    * fim de curso [3,4] Digital
    */
-  //private double startTime;
+  private double startTime;
 
 //chassi
    Victor victor1 = new Victor(1);
@@ -42,19 +43,12 @@ public class Robot extends TimedRobot {
 
    MotorControllerGroup m_left = new MotorControllerGroup(victor1, talon1);
    MotorControllerGroup m_right = new MotorControllerGroup(victor2, talon2);
- 
+
    DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right); 
-
-//variaveis
-
-/**
- * Variavel de controle da velocidade
- */
-   double modificadorVelocidade = 1.0;
+   double speed = 1.0;
    Timer timer = new Timer();
 
-//controle led
-   ledControl lc = new ledControl(7,8,9);
+  //ledControl lc = new ledControl(8,9,7);
 
 //garraMovel
    Victor m_roller = new Victor(5);
@@ -62,34 +56,16 @@ public class Robot extends TimedRobot {
 
 
 
-//sensores digitais
+
    Encoder encoder = new Encoder(2, 1,false, EncodingType.k1X);
-   Encoder encoder2 = new Encoder(6, 5,false, EncodingType.k1X);
-   DigitalInput fimDeCursoCima = new DigitalInput(3);
-
-
-/**
- * joystick map:
- *  buttom 7- velocidade 0.6;
- *  buttom 2- velocidade 0.8;
- *  buttom 3- velocidade 1.0;
- *  buttom 5- velocidade 0.7 (pra fora);
- *  buttom 6- velocidade -0.7 (pra dentro);
- *  buttom 4- velocidade 0.7 (subindo);
- *  buttom 1- velocidade -0.7 (descendo);
- */
+   DigitalInput input = new DigitalInput(3);
+   DigitalInput input1 = new DigitalInput(4);
    Joystick joy1 = new Joystick(0);
 
-
-/**
- * função para formatar uma double em duas casas decimais.
- * (string)
- * @return valor da double formatado em string
- */
    public static String formatForDashboard(double speed1) {
     return String.format("%.2f", speed1);
 
-}
+  }
    
   @Override
   public void robotInit(){
@@ -102,85 +78,111 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     timer.start();
+    startTime = timer.get();
+    System.out.println("start:" + startTime);
   }
-  
+
 
   @Override
   public void autonomousPeriodic() {
     double currentTime = timer.get();
 
-    if(currentTime < 3){
-      m_roller.set(0.9);
-    }else if(currentTime <7 ){
-      m_roller.stopMotor();
-      m_drive.arcadeDrive(-0.6,0.0);
-    } else if(currentTime<9){
-      m_drive.arcadeDrive(-0.6,0.0);
-    }else if(currentTime<13){
+    if (currentTime <3) {
+      System.out.println(currentTime);
+      System.out.println("menos de 3s");
+      m_drive.arcadeDrive(0.5,0.0);
+    }
+    else if(currentTime<7){
+      System.out.println(currentTime);
+      System.out.println("menos de 7s");
+      m_drive.arcadeDrive(0.0,0.6);
+    }else if(currentTime<9){
       m_drive.arcadeDrive(0.0,0.0);
-    }else {
-      m_drive.arcadeDrive(0.0, 0.0);
+    }else if(currentTime<13){
+      m_drive.arcadeDrive(0.0,-0.5);
+    }else{
+  
+      m_drive.arcadeDrive(0.0,0.0);
+    
     }
 
-    System.out.println(currentTime);
+
 
   }
 
   @Override
   public void teleopInit() {
-    lc.run();
+    //System.out.println("SOCORRO");
+     // lc.startLed();
+    
     
   }
 
-/*
- * modificador de velocidade em 60%, 80% e 100% do motor.
- */
+
+
   @Override
   public void teleopPeriodic() {
+   // lc.run();
     SmartDashboard.putString("Velocidade", formatForDashboard(-joy1.getY()));
-    SmartDashboard.putNumber("Modificador", modificadorVelocidade);
+    SmartDashboard.putNumber("Modificador", speed);
     
-    if(joy1.getRawButton(7)){
-      modificadorVelocidade = .6;
-      SmartDashboard.putNumber("Modificador", modificadorVelocidade);
+    if(joy1.getRawButton(1)){
+      speed = .6;
+      SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(2)){
-      modificadorVelocidade = .8;
-      SmartDashboard.putNumber("Modificador", modificadorVelocidade);
+      speed = .8;
+      SmartDashboard.putNumber("Modificador", speed);
+    }else if(joy1.getRawButton(2)){
+      speed = .8;
+      SmartDashboard.putNumber("Modificador", speed);
     }else if(joy1.getRawButton(3)){
-      modificadorVelocidade = 1.0;
-      SmartDashboard.putNumber("Modificador", modificadorVelocidade);
+      speed = 1.0;
+      SmartDashboard.putNumber("Modificador", speed);
     }
     
-    m_drive.arcadeDrive(-joy1.getY()*modificadorVelocidade, joy1.getRawAxis(4)*0.75);
+    m_drive.arcadeDrive(-joy1.getY()*speed, joy1.getRawAxis(2)*0.75);
 
 //esteira
     if(joy1.getRawButton(5)){
       m_roller.set(0.7);
       SmartDashboard.putString("esteira", "pra fora ");
     }else if(joy1.getRawButton(6)){//rb
-      m_roller.set(-0.7);
+ 
+ 
       SmartDashboard.putString("esteira", "pra dentro");
+      m_roller.set(-0.7);
     }else{
-      m_roller.set(0.0);
-    }
+         m_roller.set(0.0);
+     }
     
 //subir/descer
-    if(joy1.getRawButton(4) && fimDeCursoCima.get()){
-      m_arm1.set(0.5);
-      SmartDashboard.putString("Estado da garra", "Subindo");
-    }else{
+    if(joy1.getRawButton(7)){
+      m_arm1.set(0.7);
+      SmartDashboard.putString("garra estado", "subindo");
+    }else if(joy1.getRawButton(8)){//
+      SmartDashboard.putString("garra estado", "descendo");
+      m_arm1.set(-0.7);
+    }
+    else {
       m_arm1.set(0.0);
-      SmartDashboard.putString("Estado da garra", "Idle");
     }
 
+     if(input.get()){
+      //System.out.println("FOI");
+    }else{
+      //System.out.println("NAO");   
+      
+    } 
 
 
-    SmartDashboard.putNumber("Encoder", encoder.get());
-    SmartDashboard.putBoolean("Fim de curso superior ", fimDeCursoCima.get());
     
+    SmartDashboard.putNumber("Encoder", encoder.get());
+    SmartDashboard.putBoolean("Fim de curso em cima ", input.get());
+    SmartDashboard.putBoolean("Fim de curso em baixo", input1.get());
+  
   }
 
-  
+
 
   @Override
   public void disabledInit() {}
